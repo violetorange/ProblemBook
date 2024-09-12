@@ -31,9 +31,16 @@ class Projects
     #[ORM\OneToMany(targetEntity: Tasks::class, mappedBy: 'project')]
     private Collection $tasks;
 
+    /**
+     * @var Collection<int, Participants>
+     */
+    #[ORM\OneToMany(targetEntity: Participants::class, mappedBy: 'project')]
+    private Collection $participants;
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
+        $this->participants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -101,6 +108,36 @@ class Projects
             // set the owning side to null (unless already changed)
             if ($task->getProject() === $this) {
                 $task->setProject(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Participants>
+     */
+    public function getParticipants(): Collection
+    {
+        return $this->participants;
+    }
+
+    public function addParticipant(Participants $participant): static
+    {
+        if (!$this->participants->contains($participant)) {
+            $this->participants->add($participant);
+            $participant->setProject($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipant(Participants $participant): static
+    {
+        if ($this->participants->removeElement($participant)) {
+            // set the owning side to null (unless already changed)
+            if ($participant->getProject() === $this) {
+                $participant->setProject(null);
             }
         }
 

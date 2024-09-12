@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello FormController!{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="mb-3">
+            {{ form_start(project_form)}}
+            <div class="mb-3">
+                {{ form(project_form) }}
+            </div>
+            {{ form_end(project_form) }}
+        </div>
+
+    <hr>
+        <div class="mb-3">
+            {{ form_start(task_form) }}
+            <div class="mb-3">
+                {{ form(task_form) }}
+            </div>
+            {{ form_end(task_form) }}
+        </div>
+    <hr>
+        <div class="mb-3">
+            {{ form_start(comment_form) }}
+            <div class="mb-3">
+                {{ form(comment_form) }}
+            </div>
+            {{ form_end(comment_form) }}
+        </div>
+    <hr>
+        <div class="mb-3">
+            {{ form_start(participant_form) }}
+            <div class="mb-3">
+                {{ form(participant_form) }}
+            </div>
+            {{ form_end(participant_form) }}
+        </div>
+    </div>
+{% endblock %}

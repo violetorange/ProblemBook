@@ -54,10 +54,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Comments::class, mappedBy: 'user_owner')]
     private Collection $comments;
 
+    /**
+     * @var Collection<int, Participants>
+     */
+    #[ORM\OneToMany(targetEntity: Participants::class, mappedBy: 'participant')]
+    private Collection $projects;
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->projects = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -232,6 +239,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($comment->getUserOwner() === $this) {
                 $comment->setUserOwner(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Participants>
+     */
+    public function getProjects(): Collection
+    {
+        return $this->projects;
+    }
+
+    public function addProject(Participants $project): static
+    {
+        if (!$this->projects->contains($project)) {
+            $this->projects->add($project);
+            $project->setParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProject(Participants $project): static
+    {
+        if ($this->projects->removeElement($project)) {
+            // set the owning side to null (unless already changed)
+            if ($project->getParticipant() === $this) {
+                $project->setParticipant(null);
             }
         }
 
