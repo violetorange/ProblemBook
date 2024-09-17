@@ -40,4 +40,18 @@ class ParticipantsRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+        /**
+         * @return Participants[] Returns an array of Participants objects
+         */
+        public function findByParticipant($value): array
+        {
+            return $this->createQueryBuilder('p')
+                ->andWhere('p.participant = :val')
+                ->setParameter('val', $value)
+                ->orderBy('p.id', 'ASC')
+                ->getQuery()
+                ->getResult()
+            ;
+        }
 }

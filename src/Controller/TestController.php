@@ -13,6 +13,8 @@ use App\Form\CommentType;
 use App\Form\ParticipantType;
 use App\Form\ProjectType;
 use App\Form\TaskType;
+use App\Repository\ParticipantsRepository;
+use ContainerAERwd9v\getParticipantsRepositoryService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,35 +27,14 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class TestController extends AbstractController
 {
+    private ParticipantsRepository $participantsRepository;
 
-    #[Route('/', name: 'app_homepage')]
-    public function homepage(EntityManagerInterface $entityManager): Response
+    public function __construct(ParticipantsRepository $participantsRepository)
     {
-        return $this->render('base.html.twig');
+        $this->participantsRepository = $participantsRepository;
     }
 
-    #[Route('/new', name: 'app_new')]
-    public function new(EntityManagerInterface $entityManager, UserPasswordHasherInterface $userPasswordHasher): Response
-    {
-        $newUser = New User();
-        $newUser->setEmail('admin@test.com');
-        $newUser->setFirstname('Артемий');
-        $newUser->setLastname('Лебедев');
-        $newUser->setPosition('Администратор');
-        $newUser->setRoles(['ROLE_ADMIN']);
-        $newUser->setPassword($userPasswordHasher->hashPassword($newUser, 'tada'));
-
-        $entityManager->persist($newUser);
-        $entityManager->flush();
-
-        return new Response('All right!');
-    }
-
-    #[Route('/admin', name: 'app_admin')]
-    public function privateZone(): Response
-    {
-        return $this->render('base.html.twig');
-    }
+    // TEST PART
 
     #[Route('/form', name: 'app_form')]
     public function index(Request $request, EntityManagerInterface $entityManager): Response
@@ -106,12 +87,22 @@ class TestController extends AbstractController
         ]);
     }
 
-    #[Route('/test', name: 'app_test')]
-    #[IsGranted('ROLE_USER')]
-    public function testPage(Security $security): Response
-    {
-        $user = $security->getUser();
+    // MAIN PART
 
-        return $this->render('base.html.twig', ['user' => $user]);
+    #[Route('/', name: 'app_homepage')]
+    public function homepage(): Response
+    {
+        return $this->render('base.html.twig');
+    }
+
+    #[Route('/user/{userId}', name: 'app_profile')]
+    public function profile($userId = null): Response
+    {
+        $user = $this->getUser();
+        $projects = $this->participantsRepository->findByParticipant($user);
+
+        return $this->render('profile.html.twig', [
+            'projects' => $projects
+        ]);
     }
 }
