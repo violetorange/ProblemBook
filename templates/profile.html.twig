@@ -1,54 +1,54 @@
-<!DOCTYPE html>
-<html>
-        {% block body %}
-            {% include 'header.html.twig' %}
-            <div class="container-fluid p-4">
-                <div class="row">
-                    <h3>
-                        <i class="fa-solid fa-laptop-code fa-xl" style="color: #74C0FC;"></i>
-                        {{ app.user.firstname }} {{ app.user.lastname }}
-                    </h3>
-                </div>
-                <div class="row mt-5">
-                    <div class="col-6">
-                        <div class="row">
-                            <h4 class="mb-3">Мои задачи</h4>
-                            <ul class="list-group">
-                                <li class="list-group-item">
-                                    <a href="/tasks">Назначенные задачи:</a> {{ app.user.tasks.count }}
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="row">
-                            <h4 class="mb-3 mt-2">Мои проекты</h4>
-                            <ul class="list-group">
-                                {% for project in projects %}
-                                    <li class="list-group-item">
-                                        <a href="/projects/{{ project.project.id }}">{{ project.project.title }}</a>
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <h4 class="mb-3">Последние комментарии</h4>
-                        <ul class="list-group mb-4">
-                            {% for comment in app.user.comments|reverse|slice(0, 5) %}
-                                <li class="list-group-item">
-                                    <p>
-                                        {{ comment.task.type }} <a href="/tasks/{{ comment.task.id }}">#{{ comment.task.id }}</a>: {{ comment.task.title }} <span class="float-end">{{ comment.createdAt|date('H:i') }} <strong>{{ comment.createdAt|date('d.m.Y') }}</strong></span>
-                                    </p>
-                                    <p class="text-truncate"> {{ comment.text }}</p>
+{% extends 'base.html.twig' %}
 
-                                </li>
-                            {% endfor %}
-                        </ul>
-                        <span class="float-end">
-                            <i class="fa-regular fa-comment" style="color: #74C0FC;"></i> <a href="/comments">Все комментарии</a>
-                        </span>
-                    </div>
+{% block title %}Профиль{% endblock %}
+
+{% block body %}
+    <div class="container-fluid p-4">
+        <div class="row">
+            <h3>
+                <i class="fa-solid fa-laptop-code fa-xl" style="color: #74C0FC;"></i>
+                {{ app.user.firstname }} {{ app.user.lastname }}
+            </h3>
+        </div>
+        <div class="row mt-5">
+            <div class="col-6">
+                <div class="row">
+                    <h4 class="mb-3">Мои задачи</h4>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <a href="/tasks">Назначенные задачи:</a> {{ app.user.tasks.count }}
+                        </li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <h4 class="mb-3 mt-2">Мои проекты</h4>
+                    <ul class="list-group">
+                        {% for project in projects %}
+                            <li class="list-group-item">
+                                <a href="/projects/{{ project.project.id }}">{{ project.project.title }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
-            {% include 'footer.html.twig' %}
-        {% endblock %}
-</html>
+            <div class="col-6">
+                <h4 class="mb-3">Последние комментарии</h4>
+                <ul class="list-group mb-4">
+                    {% for comment in app.user.comments|reverse|slice(0, 5) %}
+                        <li class="list-group-item">
+                            <p>
+                                {{ comment.task.type }} <a href="/tasks/{{ comment.task.id }}">#{{ comment.task.id }}</a>: {{ comment.task.title }} <span class="float-end">{{ comment.createdAt|date('H:i') }} <strong>{{ comment.createdAt|date('d.m.Y') }}</strong></span>
+                            </p>
+                            <p class="text-truncate"> {{ comment.text }}</p>
+
+                        </li>
+                    {% endfor %}
+                </ul>
+                <span class="float-end">
+                    <i class="fa-regular fa-comment" style="color: #74C0FC;"></i> <a href="/comments">Все комментарии</a>
+                </span>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

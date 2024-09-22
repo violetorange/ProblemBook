@@ -1,4 +1,3 @@
-import './bootstrap.js';
 /*
  * Welcome to your app's main JavaScript file!
  *
@@ -7,5 +6,15 @@ import './bootstrap.js';
  */
 import './styles/app.css';
 import 'bootstrap';
+import 'datatables.net';
+import 'datatables.net-bs5';
 
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+
+$(document).ready( function () {
+    $('#tasksTable').DataTable({
+        paging: false,
+        searching: false,
+        info: false,
+        autoWidth: false
+    });
+} );

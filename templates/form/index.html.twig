@@ -1,9 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello FormController!{% endblock %}
+{% block title %}Формы для админа{% endblock %}
 
 {% block body %}
-    {% include 'header.html.twig' %}
     <div class="container">
         <div class="mb-3">
             {{ form_start(project_form)}}
@@ -38,5 +37,4 @@
             {{ form_end(participant_form) }}
         </div>
     </div>
-    {% include 'footer.html.twig' %}
 {% endblock %}

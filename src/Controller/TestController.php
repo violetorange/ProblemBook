@@ -8,32 +8,22 @@ use App\Entity\Comments;
 use App\Entity\Participants;
 use App\Entity\Projects;
 use App\Entity\Tasks;
-use App\Entity\User;
 use App\Form\CommentType;
 use App\Form\ParticipantType;
 use App\Form\ProjectType;
 use App\Form\TaskType;
+use App\Repository\CommentsRepository;
 use App\Repository\ParticipantsRepository;
-use ContainerAERwd9v\getParticipantsRepositoryService;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class TestController extends AbstractController
 {
-    private ParticipantsRepository $participantsRepository;
-
-    public function __construct(ParticipantsRepository $participantsRepository)
-    {
-        $this->participantsRepository = $participantsRepository;
-    }
-
     // TEST PART
 
     #[Route('/form', name: 'app_form')]
@@ -96,13 +86,32 @@ class TestController extends AbstractController
     }
 
     #[Route('/user/{userId}', name: 'app_profile')]
-    public function profile($userId = null): Response
+    public function profile($userId = null, ParticipantsRepository $participantsRepository): Response
     {
         $user = $this->getUser();
-        $projects = $this->participantsRepository->findByParticipant($user);
+        $projects = $participantsRepository->findAllOrderedByParticipant($user);
 
         return $this->render('profile.html.twig', [
             'projects' => $projects
+        ]);
+    }
+
+    #[Route('/tasks', name: 'app_tasks')]
+    public function tasks(): Response
+    {
+        return $this->render('tasks.html.twig');
+    }
+
+    #[Route('/comments', name: 'app_comments')]
+    public function comments(CommentsRepository $commentsRepository, Request $request): Response
+    {
+        $user = $this->getUser();
+        $queryBuilder = $commentsRepository->createOrderedByUserQueryBuilder($user);
+        $adapter = new QueryAdapter($queryBuilder);
+        $pagerfanta = Pagerfanta::createForCurrentPageWithMaxPerPage($adapter, $request->query->get('page', 1), 10);
+
+        return $this->render('comments.html.twig', [
+            'pager' => $pagerfanta
         ]);
     }
 }

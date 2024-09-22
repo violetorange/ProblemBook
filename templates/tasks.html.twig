@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Задачи{% endblock %}
+
+{% block body %}
+    <div class="container-fluid p-4">
+        <div class="row">
+            <h3>
+                <i class="fa-regular fa-paste fa-xl" style="color: #74C0FC;"></i>
+                Задачи
+            </h3>
+        </div>
+        <div class="row">
+            <div class="col">
+                <table id="tasksTable" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Проект</th>
+                            <th>Тип</th>
+                            <th>Тема</th>
+                            <th>Назначен</th>
+                            <th>Обновлено</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in app.user.tasks %}
+                            <tr>
+                                <td><a href="/tasks/{{ task.id }}">{{ task.id }}</a></td>
+                                <td>{{ task.project.title }}</td>
+                                <td>{{ task.type }}</td>
+                                <td>{{ task.title }}</td>
+                                <td>{{ app.user.firstname }} {{ app.user.lastname }}</td>
+                                <td><strong>{{ task.createdAt|date('d.m.Y H:i ') }}</strong></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

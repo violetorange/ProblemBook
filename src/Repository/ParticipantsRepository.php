@@ -16,6 +16,20 @@ class ParticipantsRepository extends ServiceEntityRepository
         parent::__construct($registry, Participants::class);
     }
 
+    /**
+     * @return Participants[] Returns an array of Participants objects
+     */
+    public function findAllOrderedByParticipant($value): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.participant = :val')
+            ->setParameter('val', $value)
+            ->orderBy('p.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
     //    /**
     //     * @return Participants[] Returns an array of Participants objects
     //     */
@@ -40,18 +54,4 @@ class ParticipantsRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-
-        /**
-         * @return Participants[] Returns an array of Participants objects
-         */
-        public function findByParticipant($value): array
-        {
-            return $this->createQueryBuilder('p')
-                ->andWhere('p.participant = :val')
-                ->setParameter('val', $value)
-                ->orderBy('p.id', 'ASC')
-                ->getQuery()
-                ->getResult()
-            ;
-        }
 }

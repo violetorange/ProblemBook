@@ -1,19 +1,41 @@
 @import '~bootstrap';
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+@import '~datatables.net-bs5';
 
 body {
     background-color: white;
+    font-family: "Jost", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: normal;
+    font-style: normal;
+}
+
+a {
+    text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6, label, th, header, footer {
+    font-family: "Oswald", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+#tasksTable {
+    margin-top: 10rem;
+}
+
+#tasksTable td {
+    text-align: center;
+}
+
+#tasksTable th {
+    text-align: center;
 }
 
 .form-control {
     border-color: #0d6efd;
     border-width: 2px;
-}
-
-label {
-    font-family: "Oswald", sans-serif;
-    font-optical-sizing: auto;
-    font-style: normal;
 }
 
 .navbar {

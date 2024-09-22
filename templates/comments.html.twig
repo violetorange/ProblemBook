@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Все комментарии{% endblock %}
+
+{% block body %}
+    <div class="container-fluid p-4">
+        <div class="row">
+            <h3>
+                <i class="fa-regular fa-comment fa-xl" style="color: #74C0FC;"></i>
+                Все комментарии
+            </h3>
+        </div>
+        <div class="row mt-5">
+            <ul class="list-group mb-4">
+                {% for comment in pager %}
+                    <li class="list-group-item">
+                        <p>
+                            {{ comment.task.type }} <a href="/tasks/{{ comment.task.id }}">#{{ comment.task.id }}</a>: {{ comment.task.title }} <span class="float-end">{{ comment.createdAt|date('H:i') }} <strong>{{ comment.createdAt|date('d.m.Y') }}</strong></span>
+                        </p>
+                        <p class="text-truncate"> {{ comment.text }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+            {{ pagerfanta(pager) }}
+        </div>
+    </div>
+{% endblock %}
