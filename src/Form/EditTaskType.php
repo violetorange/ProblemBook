@@ -2,38 +2,41 @@
 
 namespace App\Form;
 
-use App\Entity\Participants;
-use App\Entity\Projects;
+use App\Entity\Tasks;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ParticipantType extends AbstractType
+class EditTaskType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('project', EntityType::class, [
-                'class' => Projects::class,
-                'choice_label' => 'title',
+            ->add('user_owner', EntityType::class, [
                 'attr' => [
                     'class' => 'form-control'
-                ]
-            ])
-            ->add('participant', EntityType::class, [
+                ],
                 'class' => User::class,
                 'choice_label' => 'email',
+                'label' => 'Назначить'
+            ])
+            ->add('text', TextareaType::class, [
                 'attr' => [
-                    'class' => 'form-control'
-                ]
+                    'class' => 'form-control',
+                ],
+                'required' => false,
+                'mapped' => false,
+                'label' => 'Комментарий:',
             ])
             ->add('Save', SubmitType::class, [
                 'attr' => [
-                    'class' => 'btn btn-primary'
-                ]
+                    'class' => 'btn btn-primary mt-3'
+                ],
+                'label' => 'Опубликовать',
             ])
         ;
     }
@@ -41,7 +44,7 @@ class ParticipantType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Participants::class,
+            'data_class' => Tasks::class,
         ]);
     }
 }

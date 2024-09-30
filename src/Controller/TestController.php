@@ -8,12 +8,15 @@ use App\Entity\Comments;
 use App\Entity\Participants;
 use App\Entity\Projects;
 use App\Entity\Tasks;
-use App\Form\CommentType;
-use App\Form\ParticipantType;
-use App\Form\ProjectType;
-use App\Form\TaskType;
+use App\Form\admin\CommentType;
+use App\Form\admin\ParticipantType;
+use App\Form\admin\ProjectType;
+use App\Form\admin\TaskType;
+use App\Form\EditTaskType;
 use App\Repository\CommentsRepository;
 use App\Repository\ParticipantsRepository;
+use App\Repository\TasksRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
@@ -86,27 +89,67 @@ class TestController extends AbstractController
     }
 
     #[Route('/user/{userId}', name: 'app_profile')]
-    public function profile($userId = null, ParticipantsRepository $participantsRepository): Response
+    public function profile($userId, UserRepository $userRepository, ParticipantsRepository $participantsRepository): Response
     {
-        $user = $this->getUser();
+        $user = $userRepository->findOneById($userId);
         $projects = $participantsRepository->findAllOrderedByParticipant($user);
 
         return $this->render('profile.html.twig', [
+            'user' => $user,
             'projects' => $projects
         ]);
     }
 
     #[Route('/tasks', name: 'app_tasks')]
-    public function tasks(): Response
+    public function tasks(Request $request, UserRepository $userRepository): Response
     {
-        return $this->render('tasks.html.twig');
+        $user = $request->get('user');
+        $currentUser = $userRepository->findOneById($user);
+
+        return $this->render('tasks.html.twig', [
+            'currentUser' => $currentUser
+        ]);
+    }
+
+    #[Route('tasks/{taskId}', name: 'app_task_detail')]
+    public function taskDetail(TasksRepository $tasksRepository, CommentsRepository $commentsRepository, $taskId, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // Редактирование задачи (+создание комментария)
+        $task = $tasksRepository->findOneById($taskId);
+
+        $editTaskForm = $this->createForm(EditTaskType::class, $task);
+        $editTaskForm->handleRequest($request);
+
+        if ($editTaskForm->isSubmitted() && $editTaskForm->isValid()) {
+            $newText = $editTaskForm->get('text')->getData();
+            if ($newText) {
+                $comment = new Comments();
+                $comment->setNumber($commentsRepository->getNextCommentNumber($task));
+                $comment->setTask($task);
+                $comment->setText($newText);
+                $comment->setUserOwner($this->getUser());
+                $comment->setCreatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow')));
+                $entityManager->persist($comment);
+            }
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_task_detail', ['taskId' => $taskId]);
+        }
+
+        // Отображение задачи
+        return $this->render('taskDetail.html.twig', [
+            'task' => $task,
+            'task_edit_form' => $editTaskForm,
+        ]);
     }
 
     #[Route('/comments', name: 'app_comments')]
-    public function comments(CommentsRepository $commentsRepository, Request $request): Response
+    public function comments(UserRepository $userRepository, CommentsRepository $commentsRepository, Request $request): Response
     {
-        $user = $this->getUser();
-        $queryBuilder = $commentsRepository->createOrderedByUserQueryBuilder($user);
+        $user = $request->get('user');
+        $currentUser = $userRepository->findOneById($user);
+
+        $queryBuilder = $commentsRepository->createOrderedByUserQueryBuilder($currentUser);
         $adapter = new QueryAdapter($queryBuilder);
         $pagerfanta = Pagerfanta::createForCurrentPageWithMaxPerPage($adapter, $request->query->get('page', 1), 10);
 

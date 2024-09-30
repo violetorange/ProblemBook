@@ -16,6 +16,16 @@ class TasksRepository extends ServiceEntityRepository
         parent::__construct($registry, Tasks::class);
     }
 
+        public function findOneById($value): ?Tasks
+        {
+            return $this->createQueryBuilder('t')
+                ->andWhere('t.id = :val')
+                ->setParameter('val', $value)
+                ->getQuery()
+                ->getOneOrNullResult()
+            ;
+        }
+
     //    /**
     //     * @return Tasks[] Returns an array of Tasks objects
     //     */

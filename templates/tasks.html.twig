@@ -24,16 +24,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for task in app.user.tasks %}
-                            <tr>
-                                <td><a href="/tasks/{{ task.id }}">{{ task.id }}</a></td>
-                                <td>{{ task.project.title }}</td>
-                                <td>{{ task.type }}</td>
-                                <td>{{ task.title }}</td>
-                                <td>{{ app.user.firstname }} {{ app.user.lastname }}</td>
-                                <td><strong>{{ task.createdAt|date('d.m.Y H:i ') }}</strong></td>
-                            </tr>
-                        {% endfor %}
+                        {% if currentUser is not null %}
+                            {% for task in currentUser.tasks %}
+                                <tr>
+                                    <td><a href="/tasks/{{ task.id }}">{{ task.id }}</a></td>
+                                    <td>{{ task.project.title }}</td>
+                                    <td>{{ task.type }}</td>
+                                    <td>{{ task.title }}</td>
+                                    <td>{{ app.user.firstname }} {{ app.user.lastname }}</td>
+                                    <td><strong>{{ task.createdAt|date('d.m.Y H:i ') }}</strong></td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
                     </tbody>
                 </table>
             </div>

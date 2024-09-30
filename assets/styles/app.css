@@ -33,6 +33,10 @@ h1, h2, h3, h4, h5, h6, label, th, header, footer {
     text-align: center;
 }
 
+#show-hide-btn {
+    /*float: right;*/
+}
+
 .form-control {
     border-color: #0d6efd;
     border-width: 2px;
@@ -53,4 +57,29 @@ h1, h2, h3, h4, h5, h6, label, th, header, footer {
 .container-fluid {
     min-height: 85vh;
     margin: 0;
+}
+
+.taskDescription {
+    border: solid #ccc 1px;
+}
+
+.commentBlock {
+    border: solid #ccc 1px;
+    padding: 0;
+}
+
+.commentTop {
+    background-color: #74C0FC;
+}
+
+#editTaskBlock {
+    display: none;
+}
+
+.mr {
+    margin-right: 10px;
+}
+
+.ml {
+    margin-left: 10px;
 }

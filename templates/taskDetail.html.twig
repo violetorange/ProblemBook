@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Задача{% endblock %}
+
+{% block body %}
+    <div class="container-fluid p-4">
+        <div class="row mb-4">
+            <h3>
+                <i class="fa-solid fa-thumbtack fa-xl" style="color: #74C0FC;"></i>
+                {{ task.type }} #{{ task.id }}
+            </h3>
+        </div>
+
+        <div class="row">
+            <h2>{{ task.title }}</h2>
+            <div class="taskDescription mt-4">
+                <div class="row p-4">
+                    <div class="col-6">
+                        <p>Назначен: <a href="/user/{{ task.userOwner.id }}">{{ task.userOwner.lastname }} {{ task.userOwner.firstname }}</a></p>
+                        <p>Дата начала: {{ task.createdAt|date('d.m.Y') }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p>Оценка временных затрат:
+                            {% if task.costEstimation is not null %}
+                                {{ task.costEstimation }} ч.
+                            {% else %}
+                                -
+                            {% endif %}
+                        </p>
+                        <p>Трудозатраты: <a href="#">7 ч.</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <h5>Описание:</h5>
+                <p>{{ task.description }}</p>
+            </div>
+            <div class="row mt-4">
+                <h5>История:</h5>
+                {% for comment in task.comments %}
+                    <div id="comment{{ comment.number }}" class="commentBlock mt-4">
+                        <p class="commentTop">
+                            <span class="ml">
+                                Обновлено: <i>{{ comment.createdAt|date('H:i') }} {{ comment.createdAt|date('d.m.Y') }}</i>
+                            </span>
+                            <a href="/user/{{ comment.getUserOwner.id }}">{{ comment.getUserOwner.lastName }} {{ comment.getUserOwner.firstName }}</a>
+                            <span class="float-end mr">
+                                <a href="{{ task.id }}#comment{{ comment.number }}">#{{ comment.number }}</a>
+                            </span>
+                        </p>
+                        <p class="ml mr">{{ comment.text }}</p>
+                    </div>
+                {% endfor %}
+                <div id="editTaskBlock" class="commentBlock mt-4 p-3">
+                    {{ form_start(task_edit_form) }}
+                    <div class="mb-3">
+                        {{ form(task_edit_form) }}
+                    </div>
+                    {{ form_end(task_edit_form) }}
+                </div>
+            </div>
+        </div>
+        <button id="show-hide-btn" class="btn btn-primary mt-3">Редактировать</button>
+    </div>
+{% endblock %}

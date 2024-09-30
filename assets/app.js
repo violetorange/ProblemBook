@@ -9,7 +9,7 @@ import 'bootstrap';
 import 'datatables.net';
 import 'datatables.net-bs5';
 
-
+// Таблица задач
 $(document).ready( function () {
     $('#tasksTable').DataTable({
         paging: false,
@@ -18,3 +18,10 @@ $(document).ready( function () {
         autoWidth: false
     });
 } );
+
+// Кнопка редактирования задачи
+$(document).ready(function() {
+    $("#show-hide-btn").click(function() {
+        $("#editTaskBlock").css("display", "block");
+    });
+});
