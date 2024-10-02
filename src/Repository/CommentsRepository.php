@@ -18,6 +18,7 @@ class CommentsRepository extends ServiceEntityRepository
         parent::__construct($registry, Comments::class);
     }
 
+    // Для pagerfanta
     public function createOrderedByUserQueryBuilder($value): QueryBuilder
     {
         return $this->createQueryBuilder('c')
@@ -26,6 +27,21 @@ class CommentsRepository extends ServiceEntityRepository
             ->orderBy('c.id', 'DESC')
             ;
     }
+
+        /**
+         * @return Comments[] Returns an array of Comments objects
+         */
+        public function getFiveByUser($value): array
+        {
+            return $this->createQueryBuilder('c')
+                ->andWhere('c.user_owner = :val')
+                ->setParameter('val', $value)
+                ->orderBy('c.created_at', 'DESC')
+                ->setMaxResults(5)
+                ->getQuery()
+                ->getResult()
+            ;
+        }
 
     public function getNextCommentNumber(Tasks $tasks): int
     {

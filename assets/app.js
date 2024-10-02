@@ -9,19 +9,18 @@ import 'bootstrap';
 import 'datatables.net';
 import 'datatables.net-bs5';
 
-// Таблица задач
-$(document).ready( function () {
+$(document).ready(function() {
+    // Таблица задач
     $('#tasksTable').DataTable({
         paging: false,
         searching: false,
         info: false,
         autoWidth: false
     });
-} );
 
-// Кнопка редактирования задачи
-$(document).ready(function() {
+    // Кнопка редактирования задачи
     $("#show-hide-btn").click(function() {
-        $("#editTaskBlock").css("display", "block");
+        $("#edit").css("display", "block");
+        window.location.hash = 'edit';
     });
 });

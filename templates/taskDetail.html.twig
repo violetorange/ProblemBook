@@ -16,7 +16,7 @@
             <div class="taskDescription mt-4">
                 <div class="row p-4">
                     <div class="col-6">
-                        <p>Назначен: <a href="/user/{{ task.userOwner.id }}">{{ task.userOwner.lastname }} {{ task.userOwner.firstname }}</a></p>
+                        <p>Назначен: <a href="{{ path('app_profile', { 'userId': task.userOwner.id }) }}">{{ task.userOwner.lastname }} {{ task.userOwner.firstname }}</a></p>
                         <p>Дата начала: {{ task.createdAt|date('d.m.Y') }}</p>
                     </div>
                     <div class="col-6">
@@ -27,7 +27,7 @@
                                 -
                             {% endif %}
                         </p>
-                        <p>Трудозатраты: <a href="#">7 ч.</a></p>
+                        <p>Трудозатраты: <a href="{{ path('app_time_costs', { 'taskId': task.id }) }}">7 ч.</a></p>
                     </div>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                             <span class="ml">
                                 Обновлено: <i>{{ comment.createdAt|date('H:i') }} {{ comment.createdAt|date('d.m.Y') }}</i>
                             </span>
-                            <a href="/user/{{ comment.getUserOwner.id }}">{{ comment.getUserOwner.lastName }} {{ comment.getUserOwner.firstName }}</a>
+                            <a href="{{ path('app_profile', { 'userId': comment.getUserOwner.id }) }}">{{ comment.getUserOwner.lastName }} {{ comment.getUserOwner.firstName }}</a>
                             <span class="float-end mr">
                                 <a href="{{ task.id }}#comment{{ comment.number }}">#{{ comment.number }}</a>
                             </span>
@@ -51,11 +51,22 @@
                         <p class="ml mr">{{ comment.text }}</p>
                     </div>
                 {% endfor %}
-                <div id="editTaskBlock" class="commentBlock mt-4 p-3">
+                <div id="edit" class="commentBlock mt-4 p-3">
                     {{ form_start(task_edit_form) }}
-                    <div class="mb-3">
-                        {{ form(task_edit_form) }}
-                    </div>
+                        <div class="row">
+                            <div class="col-6">
+                                {{ form_row(task_edit_form.user_owner) }}
+                                {{ form_row(task_edit_form.timeCostsDescription) }}
+                            </div>
+                            <div class="col-6">
+                                {{ form_row(task_edit_form.cost_estimation) }}
+                                {{ form_row(task_edit_form.timeCostsAmount) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            {{ form_row(task_edit_form.text) }}
+                            {{ form_row(task_edit_form.Save) }}
+                        </div>
                     {{ form_end(task_edit_form) }}
                 </div>
             </div>

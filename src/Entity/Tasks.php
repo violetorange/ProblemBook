@@ -44,9 +44,16 @@ class Tasks
     #[ORM\OneToMany(targetEntity: Comments::class, mappedBy: 'task')]
     private Collection $comments;
 
+    /**
+     * @var Collection<int, TimeCosts>
+     */
+    #[ORM\OneToMany(targetEntity: TimeCosts::class, mappedBy: 'task')]
+    private Collection $timeCosts;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->timeCosts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -162,6 +169,36 @@ class Tasks
             // set the owning side to null (unless already changed)
             if ($comment->getTask() === $this) {
                 $comment->setTask(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TimeCosts>
+     */
+    public function getTimeCosts(): Collection
+    {
+        return $this->timeCosts;
+    }
+
+    public function addTimeCost(TimeCosts $timeCost): static
+    {
+        if (!$this->timeCosts->contains($timeCost)) {
+            $this->timeCosts->add($timeCost);
+            $timeCost->setTask($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTimeCost(TimeCosts $timeCost): static
+    {
+        if ($this->timeCosts->removeElement($timeCost)) {
+            // set the owning side to null (unless already changed)
+            if ($timeCost->getTask() === $this) {
+                $timeCost->setTask(null);
             }
         }
 

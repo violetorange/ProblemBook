@@ -60,11 +60,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Participants::class, mappedBy: 'participant')]
     private Collection $projects;
 
+    /**
+     * @var Collection<int, TimeCosts>
+     */
+    #[ORM\OneToMany(targetEntity: TimeCosts::class, mappedBy: 'user_owner')]
+    private Collection $timeCosts;
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->projects = new ArrayCollection();
+        $this->timeCosts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -269,6 +276,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($project->getParticipant() === $this) {
                 $project->setParticipant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TimeCosts>
+     */
+    public function getTimeCosts(): Collection
+    {
+        return $this->timeCosts;
+    }
+
+    public function addTimeCost(TimeCosts $timeCost): static
+    {
+        if (!$this->timeCosts->contains($timeCost)) {
+            $this->timeCosts->add($timeCost);
+            $timeCost->setUserOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTimeCost(TimeCosts $timeCost): static
+    {
+        if ($this->timeCosts->removeElement($timeCost)) {
+            // set the owning side to null (unless already changed)
+            if ($timeCost->getUserOwner() === $this) {
+                $timeCost->setUserOwner(null);
             }
         }
 

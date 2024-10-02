@@ -16,16 +16,16 @@
                     <h4 class="mb-3">Мои задачи</h4>
                     <ul class="list-group">
                         <li class="list-group-item">
-                            <a href="/tasks?user={{ app.request.uri|split('/')|last }}">Назначенные задачи:</a> {{ user.tasks.count }}
+                            <a href="{{ path('app_tasks', {'user': user.id}) }}">Назначенные задачи:</a> {{ user.tasks.count }}
                         </li>
                     </ul>
                 </div>
                 <div class="row">
                     <h4 class="mb-3 mt-2">Мои проекты</h4>
                     <ul class="list-group">
-                        {% for project in projects %}
+                        {% for participant in participating %}
                             <li class="list-group-item">
-                                <a href="/projects/{{ project.project.id }}">{{ project.project.title }}</a>
+                                <a href="{{ path('app_project', {'projectId': participant.project.id}) }}">{{ participant.project.title }}</a>
                             </li>
                         {% endfor %}
                     </ul>
@@ -34,17 +34,17 @@
             <div class="col-6">
                 <h4 class="mb-3">Последние комментарии</h4>
                 <ul class="list-group mb-4">
-                    {% for comment in user.comments|reverse|slice(0, 5) %}
+                    {% for comment in comments %}
                         <li class="list-group-item">
                             <p>
-                                {{ comment.task.type }} <a href="/tasks/{{ comment.task.id }}">#{{ comment.task.id }}</a>: {{ comment.task.title }} <span class="float-end">{{ comment.createdAt|date('H:i') }} <strong>{{ comment.createdAt|date('d.m.Y') }}</strong></span>
+                                {{ comment.task.type }} <a href="{{ path('app_task_detail', {'taskId': comment.task.id}) }}#comment{{ comment.number }}">#{{ comment.task.id }}</a>: {{ comment.task.title }} <span class="float-end">{{ comment.createdAt|date('H:i') }} <strong>{{ comment.createdAt|date('d.m.Y') }}</strong></span>
                             </p>
                             <p class="text-truncate"> {{ comment.text }}</p>
                         </li>
                     {% endfor %}
                 </ul>
                 <span class="float-end">
-                    <i class="fa-regular fa-comment" style="color: #74C0FC;"></i> <a href="/comments?user={{ app.request.uri|split('/')|last }}">Все комментарии</a>
+                    <i class="fa-regular fa-comment" style="color: #74C0FC;"></i> <a href="{{ path('app_comments', {'user': user.id}) }}">Все комментарии</a>
                 </span>
             </div>
         </div>

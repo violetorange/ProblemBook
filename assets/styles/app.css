@@ -42,6 +42,14 @@ h1, h2, h3, h4, h5, h6, label, th, header, footer {
     border-width: 2px;
 }
 
+.formSmallInput {
+    width: 15%;
+}
+
+.nonResize {
+    resize: none;
+}
+
 .navbar {
     color: white;
 }
@@ -72,7 +80,7 @@ h1, h2, h3, h4, h5, h6, label, th, header, footer {
     background-color: #74C0FC;
 }
 
-#editTaskBlock {
+#edit {
     display: none;
 }
 

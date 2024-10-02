@@ -17,7 +17,7 @@
                     Problem Book
                 </a>
                 {% if is_granted('ROLE_USER') %}
-                    <a class="nav-link ms-auto" href="/user/{{ app.user.id }}">
+                    <a class="nav-link ms-auto" href="{{ path('app_profile', { 'userId': app.user.id }) }}">
                         {{ app.user.email }}
                     </a>
                 {% endif %}

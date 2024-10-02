@@ -8,6 +8,7 @@ use App\Entity\Comments;
 use App\Entity\Participants;
 use App\Entity\Projects;
 use App\Entity\Tasks;
+use App\Entity\TimeCosts;
 use App\Form\admin\CommentType;
 use App\Form\admin\ParticipantType;
 use App\Form\admin\ProjectType;
@@ -23,6 +24,7 @@ use Pagerfanta\Pagerfanta;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 class TestController extends AbstractController
@@ -89,38 +91,48 @@ class TestController extends AbstractController
     }
 
     #[Route('/user/{userId}', name: 'app_profile')]
-    public function profile($userId, UserRepository $userRepository, ParticipantsRepository $participantsRepository): Response
+    public function profile($userId, UserRepository $userRepository, ParticipantsRepository $participantsRepository, CommentsRepository $commentsRepository): Response
     {
         $user = $userRepository->findOneById($userId);
-        $projects = $participantsRepository->findAllOrderedByParticipant($user);
+        if (!$user) {
+            throw new NotFoundHttpException('Пользователь не найден');
+        }
+        $participating = $participantsRepository->findAllOrderedByParticipant($user);
+        $comments = $commentsRepository->getFiveByUser($user);
 
         return $this->render('profile.html.twig', [
             'user' => $user,
-            'projects' => $projects
+            'participating' => $participating,
+            'comments' => $comments
         ]);
     }
 
     #[Route('/tasks', name: 'app_tasks')]
     public function tasks(Request $request, UserRepository $userRepository): Response
     {
-        $user = $request->get('user');
-        $currentUser = $userRepository->findOneById($user);
+        $userId = $request->get('user');
+        $currentUser = $userRepository->findOneById($userId);
+        if (!$currentUser) {
+            throw new NotFoundHttpException('Пользователь не найден');
+        }
 
         return $this->render('tasks.html.twig', [
             'currentUser' => $currentUser
         ]);
     }
 
-    #[Route('tasks/{taskId}', name: 'app_task_detail')]
+    #[Route('task/{taskId}', name: 'app_task_detail')]
     public function taskDetail(TasksRepository $tasksRepository, CommentsRepository $commentsRepository, $taskId, Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Редактирование задачи (+создание комментария)
+        // Редактирование задачи
         $task = $tasksRepository->findOneById($taskId);
 
         $editTaskForm = $this->createForm(EditTaskType::class, $task);
         $editTaskForm->handleRequest($request);
 
         if ($editTaskForm->isSubmitted() && $editTaskForm->isValid()) {
+
+            // Создание комментария
             $newText = $editTaskForm->get('text')->getData();
             if ($newText) {
                 $comment = new Comments();
@@ -131,6 +143,20 @@ class TestController extends AbstractController
                 $comment->setCreatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow')));
                 $entityManager->persist($comment);
             }
+
+            // Внесение трудозатрат
+            $newTimeCostsAmount = $editTaskForm->get('timeCostsAmount')->getData();
+            if ($newTimeCostsAmount > 0) {
+                $newTimeCostsDescription = $editTaskForm->get('timeCostsDescription')->getData();
+                $timeCosts = new TimeCosts();
+                $timeCosts->setUserOwner($this->getUser());
+                $timeCosts->setTask($task);
+                $timeCosts->setCreatedAt(new \DateTimeImmutable('now', new \DateTimeZone('Europe/Moscow')));
+                $timeCosts->setTime($newTimeCostsAmount);
+                $timeCosts->setDescription($newTimeCostsDescription);
+                $entityManager->persist($timeCosts);
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_task_detail', ['taskId' => $taskId]);
@@ -148,6 +174,9 @@ class TestController extends AbstractController
     {
         $user = $request->get('user');
         $currentUser = $userRepository->findOneById($user);
+        if (!$currentUser) {
+            throw new NotFoundHttpException('Пользователь не найден');
+        }
 
         $queryBuilder = $commentsRepository->createOrderedByUserQueryBuilder($currentUser);
         $adapter = new QueryAdapter($queryBuilder);
@@ -156,5 +185,17 @@ class TestController extends AbstractController
         return $this->render('comments.html.twig', [
             'pager' => $pagerfanta
         ]);
+    }
+
+    #[Route('tasks/{taskId}/time_costs', name: 'app_time_costs')]
+    public function timeCosts(): Response
+    {
+        return $this->render('timeCosts.html.twig', []);
+    }
+
+    #[Route('project/{projectId}', name: 'app_project')]
+    public function project(): Response
+    {
+        return $this->render('projectDetail.html.twig', []);
     }
 }
