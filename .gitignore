@@ -32,3 +32,4 @@ yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 
 .idea/
+/public/uploads/

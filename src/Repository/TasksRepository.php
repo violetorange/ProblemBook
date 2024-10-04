@@ -26,6 +26,21 @@ class TasksRepository extends ServiceEntityRepository
             ;
         }
 
+        /**
+         * @return Tasks[] Returns an array of Tasks objects
+         */
+        public function findByProjectGrouppedByType($value): array
+        {
+            return $this->createQueryBuilder('t')
+                ->select('t.type, COUNT(t)')
+                ->groupBy('t.type')
+                ->andWhere('t.project = :val')
+                ->setParameter('val', $value)
+                ->getQuery()
+                ->getResult()
+            ;
+        }
+
     //    /**
     //     * @return Tasks[] Returns an array of Tasks objects
     //     */

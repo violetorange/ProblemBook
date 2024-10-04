@@ -5,5 +5,30 @@
 {% block body %}
     <div class="container-fluid p-4">
         <h2>Затраты времени</h2>
+
+        <table class="table timeCostsTable">
+            <thead>
+            <tr>
+                <th scope="col">Дата</th>
+                <th scope="col">Пользователь</th>
+                <th scope="col">Задача</th>
+                <th scope="col">Комментарий</th>
+                <th scope="col">Время</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for timer in timeCosts %}
+                <tr>
+                    <td>{{ timer.createdAt|date('d.m.y') }}</td>
+                    <td>{{ timer.userOwner.firstname }} {{ timer.userOwner.lastname }}</td>
+                    <td>{{ timer.task.type }} <a href="{{ path('app_task_detail', {'taskId': timer.task.id}) }}">#{{ timer.task.id }}</a>: {{ timer.task.title }}</td>
+                    <td>{{ timer.description }}</td>
+                    <td>{{ timer.time }} ч.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+
     </div>
 {% endblock %}

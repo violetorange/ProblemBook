@@ -20,14 +20,14 @@
                         <p>Дата начала: {{ task.createdAt|date('d.m.Y') }}</p>
                     </div>
                     <div class="col-6">
-                        <p>Оценка временных затрат:
+                        <p>Оценка трудозатрат:
                             {% if task.costEstimation is not null %}
                                 {{ task.costEstimation }} ч.
                             {% else %}
                                 -
                             {% endif %}
                         </p>
-                        <p>Трудозатраты: <a href="{{ path('app_time_costs', { 'taskId': task.id }) }}">7 ч.</a></p>
+                        <p>Трудозатраты: <a href="{{ path('app_time_costs', { 'taskId': task.id }) }}">{{ totalTime }} ч.</a></p>
                     </div>
                 </div>
             </div>

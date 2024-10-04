@@ -16,8 +16,11 @@ use App\Form\admin\TaskType;
 use App\Form\EditTaskType;
 use App\Repository\CommentsRepository;
 use App\Repository\ParticipantsRepository;
+use App\Repository\ProjectsRepository;
 use App\Repository\TasksRepository;
+use App\Repository\TimeCostsRepository;
 use App\Repository\UserRepository;
+use App\Service\UploadFile;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
@@ -32,7 +35,7 @@ class TestController extends AbstractController
     // TEST PART
 
     #[Route('/form', name: 'app_form')]
-    public function index(Request $request, EntityManagerInterface $entityManager): Response
+    public function index(Request $request, EntityManagerInterface $entityManager, UploadFile $uploadFile): Response
     {
         // Project Form
         $project = new Projects();
@@ -40,6 +43,12 @@ class TestController extends AbstractController
         $projectForm->handleRequest($request);
 
         if ($projectForm->isSubmitted() && $projectForm->isValid()) {
+            $projectLogo = $projectForm->get('img')->getData();
+            if ($projectLogo) {
+                $logoSrc = $uploadFile->upload($projectLogo);
+                $project->setImg($logoSrc);
+            }
+
             $entityManager->persist($project);
             $entityManager->flush();
         }
@@ -122,7 +131,7 @@ class TestController extends AbstractController
     }
 
     #[Route('task/{taskId}', name: 'app_task_detail')]
-    public function taskDetail(TasksRepository $tasksRepository, CommentsRepository $commentsRepository, $taskId, Request $request, EntityManagerInterface $entityManager): Response
+    public function taskDetail(TasksRepository $tasksRepository, CommentsRepository $commentsRepository, TimeCostsRepository $timeCostsRepository, $taskId, Request $request, EntityManagerInterface $entityManager): Response
     {
         // Редактирование задачи
         $task = $tasksRepository->findOneById($taskId);
@@ -162,10 +171,18 @@ class TestController extends AbstractController
             return $this->redirectToRoute('app_task_detail', ['taskId' => $taskId]);
         }
 
+        // Общее количество затраченного на задачу времени
+        $currentTimeCosts = $timeCostsRepository->findByTask($task);
+        $totalTime = 0;
+        foreach ($currentTimeCosts as $timeCost) {
+            $totalTime += $timeCost->getTime();
+        }
+
         // Отображение задачи
         return $this->render('taskDetail.html.twig', [
             'task' => $task,
             'task_edit_form' => $editTaskForm,
+            'totalTime' => $totalTime
         ]);
     }
 
@@ -188,14 +205,33 @@ class TestController extends AbstractController
     }
 
     #[Route('tasks/{taskId}/time_costs', name: 'app_time_costs')]
-    public function timeCosts(): Response
+    public function timeCosts($taskId, TasksRepository $tasksRepository, TimeCostsRepository $timeCostsRepository): Response
     {
-        return $this->render('timeCosts.html.twig', []);
+        $currentTask = $tasksRepository->findOneById($taskId);
+        if (!$currentTask) {
+            throw new NotFoundHttpException('Задача не найдена');
+        }
+        $currenTasktTimeCosts = $timeCostsRepository->findByTask($currentTask);
+
+        return $this->render('timeCosts.html.twig', [
+            'timeCosts' => $currenTasktTimeCosts
+        ]);
     }
 
     #[Route('project/{projectId}', name: 'app_project')]
-    public function project(): Response
+    public function project($projectId, ProjectsRepository $projectsRepository, TasksRepository $tasksRepository): Response
     {
-        return $this->render('projectDetail.html.twig', []);
+        $currentProject = $projectsRepository->find($projectId);
+        if (!$currentProject) {
+            throw new NotFoundHttpException('Проект не найден');
+        }
+
+        $currentProjectTasks = $tasksRepository->findByProjectGrouppedByType($currentProject);
+
+
+        return $this->render('projectDetail.html.twig', [
+            'project' => $currentProject,
+            'groupped_tasks' => $currentProjectTasks
+        ]);
     }
 }

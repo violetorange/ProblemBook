@@ -16,6 +16,20 @@ class TimeCostsRepository extends ServiceEntityRepository
         parent::__construct($registry, TimeCosts::class);
     }
 
+        /**
+         * @return TimeCosts[] Returns an array of TimeCosts objects
+         */
+        public function findByTask($value): array
+        {
+            return $this->createQueryBuilder('t')
+                ->andWhere('t.task = :val')
+                ->setParameter('val', $value)
+                ->orderBy('t.created_at', 'DESC')
+                ->getQuery()
+                ->getResult()
+            ;
+        }
+
     //    /**
     //     * @return TimeCosts[] Returns an array of TimeCosts objects
     //     */

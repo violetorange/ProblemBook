@@ -33,8 +33,13 @@ h1, h2, h3, h4, h5, h6, label, th, header, footer {
     text-align: center;
 }
 
-#show-hide-btn {
-    /*float: right;*/
+.img-fluid {
+    max-width: 33%;
+    height: auto;
+}
+
+.timeCostsTable {
+    margin-top: 10rem;
 }
 
 .form-control {
