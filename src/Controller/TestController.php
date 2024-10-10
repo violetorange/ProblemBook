@@ -231,7 +231,30 @@ class TestController extends AbstractController
 
         return $this->render('projectDetail.html.twig', [
             'project' => $currentProject,
-            'groupped_tasks' => $currentProjectTasks
+            'grouped_tasks' => $currentProjectTasks
+        ]);
+    }
+
+    #[Route('project/{projectId}/tasks', name: 'app_project_tasks')]
+    public function projectTasks($projectId, ProjectsRepository $projectsRepository, TasksRepository $tasksRepository,Request $request): Response
+    {
+        $currentProject = $projectsRepository->find($projectId);
+        if (!$currentProject) {
+            throw new NotFoundHttpException('Проект не найден');
+        }
+
+        $currentType = $request->get('type');
+
+        if ($currentType) {
+            $currentTasks = $tasksRepository->findByTypeAndProject($currentType, $currentProject);
+        } else {
+            $currentTasks = $currentProject->getTasks();
+        }
+
+        return $this->render('projectTasks.html.twig', [
+            'project' => $currentProject,
+            'tasks' => $currentTasks,
+            'type' => $currentType
         ]);
     }
 }

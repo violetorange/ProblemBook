@@ -17,10 +17,10 @@
                     </tr>
                     </thead>
                     <tbody>
-                        {% for task in groupped_tasks  %}
+                        {% for task in grouped_tasks  %}
                             <tr>
                                 <td>{{ task.type }}</td>
-                                <td><a href="">{{ task.1 }}</a></td>
+                                <td><a href="{{ path('app_project_tasks', {'projectId': project.id, 'type': task.type}) }}">{{ task.1 }}</a></td>
                             </tr>
                         {% endfor %}
                     </tbody>

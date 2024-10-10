@@ -41,6 +41,22 @@ class TasksRepository extends ServiceEntityRepository
             ;
         }
 
+        /**
+         * @return Tasks[] Returns an array of Tasks objects
+         */
+        public function findByTypeAndProject($type, $project): array
+        {
+            return $this->createQueryBuilder('t')
+                ->andWhere('t.type = :type')
+                ->andWhere('t.project = :project')
+                ->setParameter('type', $type)
+                ->setParameter('project', $project)
+                ->orderBy('t.created_at', 'ASC')
+                ->getQuery()
+                ->getResult()
+            ;
+        }
+
     //    /**
     //     * @return Tasks[] Returns an array of Tasks objects
     //     */

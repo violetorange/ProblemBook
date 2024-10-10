@@ -30,7 +30,7 @@
                                 <td>{{ task.project.title }}</td>
                                 <td>{{ task.type }}</td>
                                 <td>{{ task.title }}</td>
-                                <td>{{ app.user.firstname }} {{ app.user.lastname }}</td>
+                                <td>{{ task.userOwner.firstname }} {{ task.userOwner.lastname }}</td>
                                 <td><strong>{{ task.createdAt|date('d.m.Y H:i ') }}</strong></td>
                             </tr>
                         {% endfor %}
