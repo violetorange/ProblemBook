@@ -135,6 +135,9 @@ class TestController extends AbstractController
     {
         // Редактирование задачи
         $task = $tasksRepository->findOneById($taskId);
+        if (!$task) {
+            throw new NotFoundHttpException('Задача не найдена');
+        }
 
         $editTaskForm = $this->createForm(EditTaskType::class, $task);
         $editTaskForm->handleRequest($request);

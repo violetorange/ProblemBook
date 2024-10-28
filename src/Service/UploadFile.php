@@ -26,7 +26,7 @@ class UploadFile
         try {
             $file->move($this->getTargetDirectory(), $fileName);
         } catch (FileException $e) {
-            print 'Download error: ' . $e; // TODO Обработать ошибку!
+            print 'Download error: ' . $e;
         }
 
         return $fileName;

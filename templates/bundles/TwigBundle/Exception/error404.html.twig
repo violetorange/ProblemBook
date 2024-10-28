@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}404{% endblock %}
+
+{% block body %}
+    <div class="container-fluid p-4">
+        <div class="row">
+            <h3>
+                <i class="fa-solid fa-xmark fa-xl" style="color: #dc3545;"></i>
+                Упс...
+            </h3>
+        </div>
+        <div class="row">
+            <p>{{ exception.message }}</p>
+            <a href="{{ path('app_homepage') }}">Вернуться на главную</a>
+        </div>
+    </div>
+{% endblock %}
