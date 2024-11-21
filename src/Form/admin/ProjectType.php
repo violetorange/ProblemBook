@@ -20,8 +20,9 @@ class ProjectType extends AbstractType
             ->add('title', TextType::class, [
                 'attr' => [
                     'placeholder' => 'Название проекта',
-                    'class' => 'form-control'
-                ]
+                    'class' => 'form-control',
+                ],
+                'label' => 'Название'
             ])
             ->add('img', FileType::class, [
                 'attr' => [
@@ -45,12 +46,14 @@ class ProjectType extends AbstractType
                 'attr' => [
                     'placeholder' => 'Описание проекта',
                     'class' => 'form-control'
-                ]
+                ],
+                'label' => 'Описание'
             ])
             ->add('Save', SubmitType::class, [
                 'attr' => [
-                    'class' => 'btn btn-primary'
-                ]
+                    'class' => 'btn btn-primary mt-2'
+                ],
+                'label' => 'Опубликовать'
             ])
         ;
     }

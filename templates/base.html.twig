@@ -21,6 +21,11 @@
                         {{ app.user.email }}
                     </a>
                 {% endif %}
+                {% if is_granted('ROLE_MANAGER') %}
+                    <a href="{{ path('app_manager') }}" class="nav-link">
+                        <i class="fa-solid fa-user-tie" style="color: #ffffff;"></i>
+                    </a>
+                {% endif %}
                 <a class="nav-link mr-sm-2" href="/logout">
                     <i class="fa-solid fa-right-from-bracket" style="color: #ffffff;"></i>
                 </a>

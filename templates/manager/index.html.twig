@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Панель менеджера{% endblock %}
+
+{% block body %}
+    <div class="container-fluid p-4">
+        <div class="row mb-4">
+            <h3>
+                <i class="fa-solid fa-user-tie fa-xl" style="color: #74C0FC;"></i>
+                Панель менеджера
+            </h3>
+        </div>
+        <div class="row mt-5">
+            <div class="col-6">
+                <h4>Добавление проекта</h4>
+                <div class="mb-3">
+                    {{ form_start(project_form)}}
+                    <div class="mb-3">
+                        {{ form(project_form) }}
+                    </div>
+                    {{ form_end(project_form) }}
+                </div>
+
+                <h4>Добавление задачи</h4>
+                <div class="mb-3">
+                    {{ form_start(task_form) }}
+                    <div class="mb-3">
+                        {{ form(task_form) }}
+                    </div>
+                    {{ form_end(task_form) }}
+                </div>
+            </div>
+
+            <div class="col-6">
+                <h4>Добавление пользователя</h4>
+                <div class="mb-3">
+                    {{ form_start(user_form) }}
+                    <div class="mb-3">
+                        {{ form(user_form) }}
+                    </div>
+                    {{ form_end(user_form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

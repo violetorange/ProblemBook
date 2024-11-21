@@ -5,14 +5,7 @@ namespace App\Controller;
 
 
 use App\Entity\Comments;
-use App\Entity\Participants;
-use App\Entity\Projects;
-use App\Entity\Tasks;
 use App\Entity\TimeCosts;
-use App\Form\admin\CommentType;
-use App\Form\admin\ParticipantType;
-use App\Form\admin\ProjectType;
-use App\Form\admin\TaskType;
 use App\Form\EditTaskType;
 use App\Repository\CommentsRepository;
 use App\Repository\ParticipantsRepository;
@@ -20,7 +13,6 @@ use App\Repository\ProjectsRepository;
 use App\Repository\TasksRepository;
 use App\Repository\TimeCostsRepository;
 use App\Repository\UserRepository;
-use App\Service\UploadFile;
 use Doctrine\ORM\EntityManagerInterface;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
@@ -32,67 +24,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class MainController extends AbstractController
 {
-    // TEST PART
-
-    #[Route('/form', name: 'app_form')]
-    public function index(Request $request, EntityManagerInterface $entityManager, UploadFile $uploadFile): Response
-    {
-        // Project Form
-        $project = new Projects();
-        $projectForm = $this->createForm(ProjectType::class, $project);
-        $projectForm->handleRequest($request);
-
-        if ($projectForm->isSubmitted() && $projectForm->isValid()) {
-            $projectLogo = $projectForm->get('img')->getData();
-            if ($projectLogo) {
-                $logoSrc = $uploadFile->upload($projectLogo);
-                $project->setImg($logoSrc);
-            }
-
-            $entityManager->persist($project);
-            $entityManager->flush();
-        }
-
-        // Task Form
-        $task = new Tasks();
-        $taskForm = $this->createForm(TaskType::class, $task);
-        $taskForm->handleRequest($request);
-
-        if ($taskForm->isSubmitted() && $taskForm->isValid()) {
-            $entityManager->persist($task);
-            $entityManager->flush();
-        }
-
-        // Comment Form
-        $comment = new Comments();
-        $commentForm = $this->createForm(CommentType::class, $comment);
-        $commentForm->handleRequest($request);
-
-        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
-            $entityManager->persist($comment);
-            $entityManager->flush();
-        }
-
-        // Participant Form
-        $participant = new Participants();
-        $participantForm = $this->createForm(ParticipantType::class, $participant);
-        $participantForm->handleRequest($request);
-
-        if ($participantForm->isSubmitted() && $participantForm->isValid()) {
-            $entityManager->persist($participant);
-            $entityManager->flush();
-        }
-
-        return $this->render('form/index.html.twig', [
-            'project_form' => $projectForm->createView(),
-            'task_form' => $taskForm->createView(),
-            'comment_form' => $commentForm->createView(),
-            'participant_form' => $participantForm->createView()
-        ]);
-    }
-
-    // MAIN PART
-
     #[Route('/', name: 'app_homepage')]
     public function homepage(): Response
     {
