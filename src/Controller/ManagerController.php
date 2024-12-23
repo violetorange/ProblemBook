@@ -2,12 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\Comments;
 use App\Entity\Participants;
 use App\Entity\Projects;
 use App\Entity\Tasks;
 use App\Entity\User;
-use App\Form\admin\CommentType;
 use App\Form\admin\ParticipantType;
 use App\Form\admin\ProjectType;
 use App\Form\admin\TaskType;
@@ -66,10 +64,21 @@ class ManagerController extends AbstractController
             $entityManager->flush();
         }
 
+        // Participant Form
+        $participant = new Participants();
+        $participantForm = $this->createForm(ParticipantType::class, $participant);
+        $participantForm->handleRequest($request);
+
+        if ($participantForm->isSubmitted() && $participantForm->isValid()) {
+            $entityManager->persist($participant);
+            $entityManager->flush();
+        }
+
         return $this->render('manager/index.html.twig', [
             'project_form' => $projectForm->createView(),
             'task_form' => $taskForm->createView(),
-            'user_form' =>$userForm->createView()
+            'user_form' => $userForm->createView(),
+            'participant_form' => $participantForm->createView()
         ]);
     }
 }

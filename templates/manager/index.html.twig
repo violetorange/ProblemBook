@@ -32,13 +32,22 @@
             </div>
 
             <div class="col-6">
-                <h4>Добавление пользователя</h4>
+                <h4>Созднаие пользователя</h4>
                 <div class="mb-3">
                     {{ form_start(user_form) }}
                     <div class="mb-3">
                         {{ form(user_form) }}
                     </div>
                     {{ form_end(user_form) }}
+                </div>
+
+                <h4>Добавление пользователя в проект</h4>
+                <div class="mb-3">
+                    {{ form_start(participant_form) }}
+                    <div class="mb-3">
+                        {{ form(participant_form) }}
+                    </div>
+                    {{ form_end(participant_form) }}
                 </div>
             </div>
         </div>
